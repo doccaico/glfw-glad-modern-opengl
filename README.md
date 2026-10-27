@@ -1,19 +1,15 @@
 ### GLFW + GLAD + MODERN OPENGL (Windows / MSVC)
-#### BUILD
+#### Build
 ```sh
 # Debug build
-$ build.bat
+$ build.bat 01-triangle-from-files
 or
-$ build.bat debug
+$ build.bat 01-triangle-from-files debug
 
 # Release build
-$ build.bat release
+$ build.bat 01-triangle-from-files release
 ```
-#### BUILD and Run
+#### Build and Run
 ```sh
-$ call build.bat && build\bin\main.exe
-```
-#### Clean
-```sh
-$ build.bat clean
+$ call build.bat 01-triangle-from-files && build\bin\01-triangle-from-files.exe
 ```

@@ -2,14 +2,14 @@
 #### Build
 ```sh
 # Debug build
-$ build.bat 01-triangle-from-files
+$ build.bat 01-triangle-a
 or
-$ build.bat 01-triangle-from-files debug
+$ build.bat 01-triangle-a debug
 
 # Release build
-$ build.bat 01-triangle-from-files release
+$ build.bat 01-triangle-a release
 ```
 #### Build and Run
 ```sh
-$ call build.bat 01-triangle-from-files && build\bin\01-triangle-from-files.exe
+$ call build.bat 01-triangle-a && build\bin\01-triangle-a.exe
 ```

@@ -15,6 +15,31 @@
 constexpr int window_width = 640;
 constexpr int window_height = 480;
 
+constexpr const char* vert_cstr =
+  "#version 460\n"
+  "\n"
+  "layout(location = 0) in vec3 aPos;\n"
+  "layout(location = 1) in vec3 aColor;\n"
+  "\n"
+  "out vec4 vertexColor;\n"
+  "\n"
+  "void main ()\n"
+  "{\n"
+  "  gl_Position = vec4(aPos, 1.0);\n"
+  "  vertexColor = vec4(aColor, 1.0);\n"
+  "}\n";
+
+constexpr const char* frag_cstr =
+  "#version 460\n"
+  "\n"
+  "in vec4 vertexColor;\n"
+  "out vec4 FragColor;\n"
+  "\n"
+  "void main()\n"
+  "{\n"
+  "    FragColor = vertexColor;\n"
+  "}\n";
+
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
   (void) scancode;
@@ -126,7 +151,7 @@ int main()
 
   // Create a program
   GLuint program{};
-  if (!create_program_from_files(SRC_DIR "/triangle.vert", SRC_DIR "/triangle.frag", program))
+  if (!create_program_from_cstr(vert_cstr, frag_cstr, program))
   {
     glfwTerminate();
     return -1;

@@ -3,7 +3,6 @@
 
 #include <GLFW/glfw3.h>
 
-#include <cstdio>
 #include <filesystem>
 #include <fstream>
 #include <print>
@@ -14,7 +13,8 @@ struct Position {
 };
 
 bool get_window_center_pos(int window_width, int window_height, Position& pos);
-bool create_program_from_files(const char* vert_filepath, const char* frag_filepath, GLuint& program);
+bool create_program_from_filepath(const char* vert_filepath, const char* frag_filepath, GLuint& program);
+bool create_program_from_cstr(const char* vert_cstr, const char* frag_cstr, GLuint& program);
 
 #ifdef UTILS_IMPLEMENTATION
 
@@ -104,7 +104,7 @@ bool create_program(GLuint vert_shader, GLuint frag_shader, GLuint& program)
   return true;
 }
 
-bool create_shader_from_file(const char* filepath, GLuint& shader, int kind)
+bool create_shader_from_filepath(const char* filepath, GLuint& shader, int kind)
 {
   std::filesystem::path path{filepath};
   std::string content{};
@@ -113,6 +113,7 @@ bool create_shader_from_file(const char* filepath, GLuint& shader, int kind)
   {
     return false;
   }
+
   std::println("[Log]: creating shader from \"{}\"", filepath);
   shader = glCreateShader(kind);
   const char* content_ptr = content.c_str();
@@ -140,20 +141,79 @@ bool create_shader_from_file(const char* filepath, GLuint& shader, int kind)
   return true;
 }
 
-bool create_program_from_files(const char* vert_filepath, const char* frag_filepath, GLuint& program)
+bool create_program_from_filepath(const char* vert_filepath, const char* frag_filepath, GLuint& program)
 {
   int result{};
 
-  std::println("{}", vert_filepath);
   GLuint vert_shader{};
-  result = create_shader_from_file(vert_filepath, vert_shader, GL_VERTEX_SHADER);
+  result = create_shader_from_filepath(vert_filepath, vert_shader, GL_VERTEX_SHADER);
   if (!result)
   {
     return false;
   }
 
   GLuint frag_shader{};
-  result = create_shader_from_file(frag_filepath, frag_shader, GL_FRAGMENT_SHADER);
+  result = create_shader_from_filepath(frag_filepath, frag_shader, GL_FRAGMENT_SHADER);
+  if (!result)
+  {
+    glDeleteShader(vert_shader);
+    return false;
+  }
+
+  if (!create_program(vert_shader, frag_shader, program))
+  {
+    glDeleteShader(vert_shader);
+    glDeleteShader(frag_shader);
+    return false;
+  }
+
+  glDeleteShader(vert_shader);
+  glDeleteShader(frag_shader);
+
+  return true;
+}
+
+bool create_shader_from_cstr(const char* content, GLuint& shader, int kind)
+{
+  shader = glCreateShader(kind);
+  glShaderSource(shader, 1, &content, nullptr);
+  glCompileShader(shader);
+
+  int result{};
+
+  glGetShaderiv(shader, GL_COMPILE_STATUS, &result);
+  if (result == GL_FALSE)
+  {
+    GLint info_len{};
+
+    glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &info_len);
+    if (info_len > 1)
+    {
+      std::string info_log;
+      info_log.resize(info_len);
+      glGetShaderInfoLog(shader, info_len, nullptr, info_log.data());
+      std::print(stderr, "{}", info_log);
+    }
+    std::println(stderr, "[Error]: GL shader index {} did not compile", shader);
+    return false;
+  }
+  return true;
+}
+
+bool create_program_from_cstr(const char* vert_cstr, const char* frag_cstr, GLuint& program)
+{
+  int result{};
+
+  GLuint vert_shader{};
+  result = create_shader_from_cstr(vert_cstr, vert_shader, GL_VERTEX_SHADER);
+  if (!result)
+  {
+    return false;
+  }
+
+
+  GLuint frag_shader{};
+  result = create_shader_from_cstr(frag_cstr, frag_shader, GL_FRAGMENT_SHADER);
   if (!result)
   {
     glDeleteShader(vert_shader);

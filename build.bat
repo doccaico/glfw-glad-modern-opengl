@@ -23,7 +23,7 @@ set "C_FLAGS=%C_FLAGS% /I include"
 set "C_FLAGS=%C_FLAGS% /I Vendor\glad\include /I Vendor\glfw\include"
 
 set "L_FLAGS=/link"
-set "L_FLAGS=%L_FLAGS% /LIBPATH:vendor\glew\lib /LIBPATH:vendor\glfw\lib"
+set "L_FLAGS=%L_FLAGS% /LIBPATH:vendor\glfw\lib\lib-vc2026"
 set "L_FLAGS=%L_FLAGS% /INCREMENTAL:no"
 set "L_FLAGS=%L_FLAGS% glfw3.lib opengl32.lib"
 set "L_FLAGS=%L_FLAGS% user32.lib gdi32.lib shell32.lib"
